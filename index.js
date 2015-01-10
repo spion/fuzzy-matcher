@@ -1,23 +1,38 @@
 var Array2d = require('array-2d');
 
-function isSeparator(code) {
-    // -/.
-    return (code >= 45 && code <= 47) ||
-        (code === 95) || // underscore
-        (code === 32) // space
+function match(what, where) {
+    if (!regularMatch(what, where))
+        return 0;
+    return dynmatch(what, where)
 }
 
-function isUpper(code) {
-    return (code >= 65 && code <= 90)
+module.exports = match;
+
+function regularMatch(what, where) {
+    var i = 0, j, m = what.length, n = where.length;
+    for (j = 0; j < n; ++j)
+        if (eqcase(where.charCodeAt(j), what.charCodeAt(i)))
+            if (++i >= m) return true;
+    return false;
 }
 
-function max(a, b, c) {
-    if (a > b) {
-        if (a > c) return a;
-        return c;
-    }
-    if (b > c) return b;
-    return c;
+function dynmatch(what, where) {
+    var a = what, b = where;
+    var m = a.length, n = b.length;
+    var C = new Array2d(m + 1, n + 1, 0);
+    for (var i = 0; i < m; i++)
+        for (var j = 0; j < n; j++)
+            C.set(i+1, j+1, max3(C.get(i, j) + gain(a,b,i,j),
+                                 C.get(i+1, j),
+                                 C.get(i, j+1)));
+    return C.get(m, n) - min2(n, 999) / 1000; // second factor is length
+}
+
+function eqcase(a, b) {
+    return a === b ||
+        (Math.abs(a - b) == 32 &&
+         isLatinLetter(a) &&
+         isLatinLetter(b))
 }
 
 var Gain = {
@@ -26,16 +41,6 @@ var Gain = {
     Normal: 1
 }
 
-function isLatinLetter(code) {
-    return (code >= 97 && code <= 122) ||
-        (code >= 67 && code <= 90);
-}
-function eqcase(a, b) {
-    return a === b ||
-        (Math.abs(a - b) == 32 &&
-         isLatinLetter(a) &&
-         isLatinLetter(b))
-}
 function gain(a, b, i, j) {
     var ai = a.charCodeAt(i), bj = b.charCodeAt(j)
     if (!eqcase(ai, bj)) return 0;
@@ -50,35 +55,32 @@ function gain(a, b, i, j) {
         return Gain.TwoOrMore
     return 1;
 }
+
+function isLatinLetter(code) {
+    return (code >= 97 && code <= 122) ||
+        (code >= 67 && code <= 90);
+}
+
+function isUpper(code) {
+    return (code >= 65 && code <= 90)
+}
+
+function isSeparator(code) {
+    return (code >= 45 && code <= 47) ||
+        (code === 95) || // underscore
+        (code === 32) // space
+}
+
+function max3(a, b, c) {
+    if (a > b) {
+        if (a > c) return a;
+        return c;
+    }
+    if (b > c) return b;
+    return c;
+}
+
 function min2(a, b) {
     if (a < b) return a;
     return b;
 }
-
-function dynmatch(what, where) {
-    var a = what, b = where;
-    var m = a.length, n = b.length;
-    var C = new Array2d(m + 1, n + 1, 0);
-    for (var i = 0; i < m; i++)
-        for (var j = 0; j < n; j++)
-            C.set(i+1, j+1, max(C.get(i, j) + gain(a,b,i,j),
-                                C.get(i+1, j),
-                                C.get(i, j+1)));
-    return C.get(m, n) - min2(n, 999) / 1000; // second factor is length
-}
-
-function regularMatch(what, where) {
-    var i = 0, j, m = what.length, n = where.length;
-    for (j = 0; j < n; ++j)
-        if (eqcase(where.charCodeAt(j), what.charCodeAt(i)))
-            if (++i >= m) return true;
-    return false;
-}
-
-function match(what, where) {
-    if (!regularMatch(what, where))
-        return 0;
-    return dynmatch(what, where)
-}
-
-module.exports = match;
