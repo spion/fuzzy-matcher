@@ -58,7 +58,7 @@ function gain(a, b, i, j) {
 
 function isLatinLetter(code) {
     return (code >= 97 && code <= 122) ||
-        (code >= 67 && code <= 90);
+        (code >= 65 && code <= 90);
 }
 
 function isUpper(code) {
