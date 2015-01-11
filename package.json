@@ -5,7 +5,7 @@
   },
   "version": "1.0.0",
   "description": "Fuzzy match lines from stdin on first argument",
-  "main": "main.js",
+  "main": "index.js",
   "dependencies": {
     "array-2d": "^1.0.1",
     "split": "^0.3.2",
