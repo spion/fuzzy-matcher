@@ -3,7 +3,7 @@
   "bin": {
     "fuzzy-matcher": "./main.js"
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Fuzzy match lines from stdin on first argument",
   "main": "index.js",
   "dependencies": {
