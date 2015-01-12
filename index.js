@@ -1,23 +1,23 @@
 var Array2d = require('array-2d');
 
-function match(what, where) {
-    if (!regularMatch(what, where))
+function match(query, line) {
+    if (!regularMatch(query, line))
         return 0;
-    return dynmatch(what, where)
+    return dynmatch(query, line)
 }
 
 module.exports = match;
 
-function regularMatch(what, where) {
-    var i = 0, j, m = what.length, n = where.length;
+function regularMatch(query, line) {
+    var i = 0, j, m = query.length, n = line.length;
     for (j = 0; j < n; ++j)
-        if (eqcase(where.charCodeAt(j), what.charCodeAt(i)))
+        if (eqcase(line.charCodeAt(j), query.charCodeAt(i)))
             if (++i >= m) return true;
     return false;
 }
 
-function dynmatch(what, where) {
-    var a = what, b = where;
+function dynmatch(query, line) {
+    var a = query, b = line;
     var m = a.length, n = b.length;
     var C = new Array2d(m + 1, n + 1, 0);
     for (var i = 0; i < m; i++)
@@ -41,17 +41,17 @@ var Gain = {
     Normal: 1
 }
 
-function gain(a, b, i, j) {
-    var ai = a.charCodeAt(i), bj = b.charCodeAt(j)
+function gain(query, line, i, j) {
+    var ai = query.charCodeAt(i), bj = line.charCodeAt(j)
     if (!eqcase(ai, bj)) return 0;
     if (j === 0)
         return Gain.Beginning;
     if (isUpper(bj))
         return Gain.Beginning;
-    var lookBehind = b.charCodeAt(j - 1)
+    var lookBehind = line.charCodeAt(j - 1)
     if (isSeparator(lookBehind))
         return Gain.Beginning;
-    if (i > 0 && eqcase(a.charCodeAt(i-1), lookBehind))
+    if (i > 0 && eqcase(query.charCodeAt(i-1), lookBehind))
         return Gain.TwoOrMore
     return 1;
 }
