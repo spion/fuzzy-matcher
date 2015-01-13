@@ -3,7 +3,10 @@
 var match = require('./index');
 var split = require('split');
 var through = require('through');
-var argv = require('yargs').argv;
+var argv = require('yargs')
+.demand(1)
+.usage("Usage: input | $0 <query>")
+.argv;
 
 var data = [];
 
