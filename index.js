@@ -37,7 +37,7 @@ function eqcase(a, b) {
 
 var Gain = {
     Beginning: 3,
-    TwoOrMore: 2,
+    TwoOrMore: 3,
     Normal: 1
 }
 
